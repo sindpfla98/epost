@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            <!--<p>csv 파일 {{form}}</p>-->
+            {{ form.as_p }}
+            <button type="submit">Upload</button>
+        </form>
+</body>
+</html>
