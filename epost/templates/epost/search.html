@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>검색</title>
+</head>
+<body>
+    <!--<form action="" method="get">-->
+      <!--<input type="text" name="keyword" value="{{ keyword }}">-->
+      <!--<input type="submit" value="검색">-->
+    <!--</form>-->
+    <p>'{{search}}' 의 검색 결과입니다.</p>
+    <table>
+    {% for plan in plans%}
+        <tr><td>{{plan.calling_plan}}</td></tr>
+    {% endfor %}
+    </table>
+</body>
+</html>

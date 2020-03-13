@@ -3,9 +3,14 @@ from django.http import HttpResponseRedirect
 import csv, os
 from .models import CallingPlan, CVSUpload
 from datetime import datetime
-from .forms import CVSUploadForm
+from .forms import CVSUploadForm, ListingForm
 from django.utils import timezone
 from django.db.models.base import ObjectDoesNotExist
+from django.conf import settings
+from rest_framework import views
+from .serializers import *
+from django.shortcuts import redirect
+
 
 def insert_data(request):
     CSV_PATH = './epost/calling-plan-data.csv'
@@ -50,19 +55,6 @@ def insert_data(request):
             # )
     return render(request, 'epost/epost.html')
 
-# 검색
-def keyword_search(request):
-    plans = CallingPlan.objects.all()
-
-    keyword = request.GET.get('keyword', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
-    if keyword: # q가 있으면
-        plans = plans.filter(calling_plan__icontains=keyword) # 제목에 q가 포함되어 있는 레코드만 필터링
-
-    return render(request, 'epost/keyword_search.html', {
-        'plans' : plans,
-        'keyword' : keyword,
-    })
-
 # csv 업로드
 def cvs_upload(request):
     if request.method == "POST":
@@ -70,7 +62,7 @@ def cvs_upload(request):
         if form.is_valid():
             form.save()
 
-            CSV_PATH = './mysite/media/'+str(CVSUpload.objects.last().file)
+            CSV_PATH = settings.MEDIA_ROOT +str(CVSUpload.objects.last().file)
             with open(CSV_PATH, encoding='utf-8-sig') as csvfile:
                 data_reader = csv.DictReader(csvfile)
                 for row in data_reader:
@@ -152,6 +144,71 @@ def cvs_upload(request):
     else:
         form = CVSUploadForm()
     return render(request, 'epost/cvs_upload.html', {'form': form})
+
+
+# 검색
+def keyword_search(request):
+    plans = CallingPlan.objects.all()
+
+    keyword = request.GET.get('keyword', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
+    if keyword: # q가 있으면
+        plans = plans.filter(calling_plan__icontains=keyword) # 제목에 q가 포함되어 있는 레코드만 필터링
+
+    return render(request, 'epost/keyword_search.html', {
+        'plans' : plans,
+        'keyword' : keyword,
+    })
+
+class Search(views.APIView):
+    """
+    검색
+    """
+    def get(self, request, format=None):
+        search = self.request.query_params.get('search')
+
+        queryset = CallingPlan.objects.filter(calling_plan__icontains=search)
+        serializer = SearchSerializer(queryset, many=True)
+
+        # return render(request, 'epost/search.html', {
+        #     'search':search,
+        #     'plans':serializer.data
+        # })
+        return Response(serializer.data)
+from rest_framework.response import Response
+
+from urllib.parse import unquote
+class Listing(views.APIView):
+    """
+    리스팅 페이지
+    """
+    def get(self, request, format=None):
+        mobile_carrier = self.request.query_params.get('mobile_carrier')
+        category = self.request.query_params.get('category')
+        data_speed = self.request.query_params.get('data_speed')
+
+        print(mobile_carrier)
+        queryset = CallingPlan.objects.filter(mobile_carrier=mobile_carrier,category=category,data_speed=data_speed)
+        serializer = ListingSerializer(queryset, many=True)
+
+        return render(request, 'epost/listing.html', {
+            'plans':serializer.data
+        })
+        # return Response(serializer.data)
+from django.urls import reverse
+def listing_search(request):
+    # if request.method == 'POST':
+    #     form = ListingForm(request.POST)
+        mobile_carrier = request.POST.get("mobile_carrier", "")
+        category = request.POST.get("category", "")
+        data_speed = request.POST.get("data_speed", "")
+        # if form.is_valid():
+            # return redirect('epost:listing')
+        queryset = CallingPlan.objects.filter(mobile_carrier=mobile_carrier, category=category, data_speed=data_speed)
+        return render(request, 'epost/listing_search.html', {'queryset':queryset})
+    # else:
+    #     form = ListingForm()
+    # return render(request, 'epost/listing_search.html', {'form': form,})
+
 
 
 
