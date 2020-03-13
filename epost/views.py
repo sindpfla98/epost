@@ -61,7 +61,6 @@ def cvs_upload(request):
         form = CVSUploadForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-
             CSV_PATH = settings.MEDIA_ROOT +str(CVSUpload.objects.last().file)
             with open(CSV_PATH, encoding='utf-8-sig') as csvfile:
                 data_reader = csv.DictReader(csvfile)
