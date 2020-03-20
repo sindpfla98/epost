@@ -1,18 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>키워드 검색</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}키워드 검색{% endblock %}
+
+{% block extra_body %}
+   <style>
+       p{ font-size: 15px; }
+       #keyword{ width: 100%; }
+   </style>
+{% endblock %}
+{% block content %}
     <form action="" method="get">
-      <input type="text" name="keyword" value="{{ keyword }}">
-      <input type="submit" value="검색">
+        <table border="1" width="60%">
+            <tr>
+                <td><label for="keyword">검색어</label></td>
+                <td><input id="keyword" type="text" name="keyword" value="{{ keyword }}">
+                    <p>요금제명을 입력하여 검색하세요.</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="right">
+                    <input type="reset" value="검색조건 초기화">
+                    <input class="button" type="submit" value="검색">
+                </td>
+            </tr>
+        </table>
+
     </form>
+
+    <p>총 {{count}}건의 검색 결과가 있습니다.</p>
+    <hr/>
     <table>
     {% for plan in plans%}
-        <tr><td>{{plan.calling_plan}}</td></tr>
+        <tr>
+            <th>{{plan.calling_plan}}</th>
+        </tr>
+        <tr>
+            <td>데이터 {{plan.data_category}}MB/{{plan.data_unit}}({{plan.data2}})</td>
+            <td>음성   {{plan.call}}{{plan.call_unit}}</td>
+            <td>문자   {{plan.message}}{{plan.message_unit}}</td>
+        </tr>
+        <tr>
+            <td>월 {{plan.pay}} 원</td>
+        </tr>
     {% endfor %}
     </table>
-</body>
-</html>
+{% endblock %}

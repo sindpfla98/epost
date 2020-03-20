@@ -1,15 +1,14 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
 import csv, os
+import requests
 from .models import CallingPlan, CVSUpload
-from datetime import datetime
-from .forms import CVSUploadForm, ListingForm
+from .forms import CVSUploadForm
+from .serializers import *
+from django.shortcuts import render
 from django.utils import timezone
 from django.db.models.base import ObjectDoesNotExist
 from django.conf import settings
 from rest_framework import views
-from .serializers import *
-from django.shortcuts import redirect
+from rest_framework.response import Response
 
 
 def insert_data(request):
@@ -144,69 +143,81 @@ def cvs_upload(request):
         form = CVSUploadForm()
     return render(request, 'epost/cvs_upload.html', {'form': form})
 
-
-# 검색
-def keyword_search(request):
-    plans = CallingPlan.objects.all()
-
-    keyword = request.GET.get('keyword', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
-    if keyword: # q가 있으면
-        plans = plans.filter(calling_plan__icontains=keyword) # 제목에 q가 포함되어 있는 레코드만 필터링
-
-    return render(request, 'epost/keyword_search.html', {
-        'plans' : plans,
-        'keyword' : keyword,
-    })
-
-class Search(views.APIView):
+class Keyword(views.APIView):
     """
-    검색
+    키워드 검색
     """
     def get(self, request, format=None):
-        search = self.request.query_params.get('search')
+        keyword = self.request.query_params.get('keyword')
 
-        queryset = CallingPlan.objects.filter(calling_plan__icontains=search)
+        queryset = CallingPlan.objects.all()
+        if keyword:
+            queryset = queryset.filter(calling_plan__icontains=keyword)
         serializer = SearchSerializer(queryset, many=True)
 
-        # return render(request, 'epost/search.html', {
-        #     'search':search,
-        #     'plans':serializer.data
-        # })
         return Response(serializer.data)
-from rest_framework.response import Response
 
-from urllib.parse import unquote
+
 class Listing(views.APIView):
     """
-    리스팅 페이지
+    조건 검색
     """
     def get(self, request, format=None):
         mobile_carrier = self.request.query_params.get('mobile_carrier')
         category = self.request.query_params.get('category')
         data_speed = self.request.query_params.get('data_speed')
 
-        print(mobile_carrier)
-        queryset = CallingPlan.objects.filter(mobile_carrier=mobile_carrier,category=category,data_speed=data_speed)
+        queryset = CallingPlan.objects.all()
+        if mobile_carrier:
+            queryset = queryset.filter(mobile_carrier=mobile_carrier)
+        if category:
+            queryset = queryset.filter(category=category)
+        if data_speed:
+            queryset = queryset.filter(data_speed=data_speed)
+
         serializer = ListingSerializer(queryset, many=True)
 
-        return render(request, 'epost/listing.html', {
-            'plans':serializer.data
-        })
-        # return Response(serializer.data)
-from django.urls import reverse
+        return Response(serializer.data)
+
+host = 'http://localhost:8000'
+
+# 검색
+def keyword_search(request):
+    path = '/epost/keyword'
+
+    keyword = request.GET.get('keyword', '')
+    params = {'keyword':keyword}
+
+    url = host + path
+    response = requests.get(url, params=params).json()
+
+    count = len(response)
+
+    return render(request, 'epost/keyword_search.html', {
+        'plans' : response,
+        'keyword':keyword,
+        'count':count,
+    })
+
 def listing_search(request):
-    # if request.method == 'POST':
-    #     form = ListingForm(request.POST)
-        mobile_carrier = request.POST.get("mobile_carrier", "")
-        category = request.POST.get("category", "")
-        data_speed = request.POST.get("data_speed", "")
-        # if form.is_valid():
-            # return redirect('epost:listing')
-        queryset = CallingPlan.objects.filter(mobile_carrier=mobile_carrier, category=category, data_speed=data_speed)
-        return render(request, 'epost/listing_search.html', {'queryset':queryset})
-    # else:
-    #     form = ListingForm()
-    # return render(request, 'epost/listing_search.html', {'form': form,})
+    path = '/epost/listing'
+
+    mobile_carrier = request.GET.get("mobile_carrier", "")
+    category = request.GET.get("category", "")
+    data_speed = request.GET.get("data_speed", "")
+
+    params = {'mobile_carrier':mobile_carrier, 'category':category, 'data_speed':data_speed}
+
+    url = host + path
+    response = requests.get(url, params=params).json()
+
+    count = len(response)
+    return render(request, 'epost/listing_search.html',
+                  {
+                      'plans':response, 'count':count,
+                      'mobile_carrier':mobile_carrier, 'category':category, 'data_speed':data_speed,
+                  })
+
 
 
 

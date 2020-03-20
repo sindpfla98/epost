@@ -5,7 +5,8 @@ from epost import views
 app_name = 'epost'
 
 urlpatterns = [
-    path('search', views.Search.as_view(), name='search'),
+    path('keyword', views.Keyword.as_view(), name='keyword'),
+    path('keyword_search', views.keyword_search, name='keyword_search'),
     path('listing', views.Listing.as_view(), name='listing'),
-    path('listing_search', views.listing_search)
+    path('listing_search', views.listing_search, name='listing_search')
 ]

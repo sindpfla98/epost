@@ -1,5 +1,5 @@
 from django import forms
-from .models import CVSUpload, CallingPlan
+from .models import CVSUpload
 
 class CVSUploadForm(forms.ModelForm):
     class Meta:
@@ -10,7 +10,3 @@ class CVSUploadForm(forms.ModelForm):
         super(CVSUploadForm, self).__init__(*args, **kwargs)
         self.fields['file'].required = False
         
-class ListingForm(forms.ModelForm):
-    class Meta:
-        model = CallingPlan
-        fields = ('mobile_carrier', 'category', 'data_speed')
