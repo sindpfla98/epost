@@ -3,9 +3,10 @@ import requests
 from .models import CallingPlan, CVSUpload
 from .forms import CVSUploadForm
 from .serializers import *
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.db.models.base import ObjectDoesNotExist
+from django.urls import reverse
 from django.conf import settings
 from rest_framework import views
 from rest_framework.response import Response
@@ -158,37 +159,18 @@ class Keyword(views.APIView):
         return Response(serializer.data)
 
 
-class Listing(views.APIView):
-    """
-    조건 검색
-    """
-    def get(self, request, format=None):
-        mobile_carrier = self.request.query_params.get('mobile_carrier')
-        category = self.request.query_params.get('category')
-        data_speed = self.request.query_params.get('data_speed')
 
-        queryset = CallingPlan.objects.all()
-        if mobile_carrier:
-            queryset = queryset.filter(mobile_carrier=mobile_carrier)
-        if category:
-            queryset = queryset.filter(category=category)
-        if data_speed:
-            queryset = queryset.filter(data_speed=data_speed)
-
-        serializer = ListingSerializer(queryset, many=True)
-
-        return Response(serializer.data)
+from django.http import HttpResponseRedirect
 
 host = 'http://localhost:8000'
-
 # 검색
 def keyword_search(request):
-    path = '/epost/keyword'
+    path = request.build_absolute_uri()
 
     keyword = request.GET.get('keyword', '')
     params = {'keyword':keyword}
 
-    url = host + path
+    url = path
     response = requests.get(url, params=params).json()
 
     count = len(response)
@@ -199,14 +181,77 @@ def keyword_search(request):
         'count':count,
     })
 
+class Listing(views.APIView):
+    """
+    조건 검색
+    """
+    def get(self, request, format=None):
+        mobile_carrier = self.request.query_params.get('mobile_carrier')
+        category = self.request.query_params.get('category')
+        data_speed = self.request.query_params.get('data_speed')
+        call = self.request.query_params.get('call')
+        message = self.request.query_params.get('message')
+        data1 = self.request.query_params.get('data1')
+
+        queryset = CallingPlan.objects.all()
+        if mobile_carrier:
+            queryset = queryset.filter(mobile_carrier__contains=mobile_carrier)
+        if category:
+            queryset = queryset.filter(category=category)
+        if data_speed:
+            queryset = queryset.filter(data_speed=data_speed)
+        if call:
+            if call == "0":
+                queryset = queryset.filter(call__lte=50)
+            elif call == "1":
+                queryset = queryset.filter(call__gt=50, call__lte=100)
+            elif call == "2":
+                queryset = queryset.filter(call__gt=100, call__lte=250)
+            elif call == "3":
+                queryset = queryset.filter(call__gt=250)
+            elif call == "4":
+                queryset = queryset.filter(call=999999)
+
+        if message:
+            if message == "0":
+                queryset = queryset.filter(message__lte=50)
+            elif message == "1":
+                queryset = queryset.filter(message__gt=50, message__lte=100)
+            elif message == "2":
+                queryset = queryset.filter(message__gt=100, message__lte=200)
+            elif message == "3":
+                queryset = queryset.filter(message__gt=200)
+            elif message == "4":
+                queryset = queryset.filter(message=999999)
+
+        if data1:
+            if data1 == "0":
+                queryset = queryset.filter(data1__lte=100)
+            elif data1 == "1":
+                queryset = queryset.filter(data1__gt=100, data1__lte=1000)
+            elif data1 == "2":
+                queryset = queryset.filter(data1__gt=1000, data1__lte=5000)
+            elif data1 == "3":
+                queryset = queryset.filter(data1__gt=5000)
+            elif data1 == "4":
+                queryset = queryset.filter(data2__contains='계속')
+
+        serializer = ListingSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
 def listing_search(request):
     path = '/epost/listing'
 
     mobile_carrier = request.GET.get("mobile_carrier", "")
     category = request.GET.get("category", "")
     data_speed = request.GET.get("data_speed", "")
+    call = request.GET.get("call", "")
+    message = request.GET.get("message", "")
+    data1 = request.GET.get("data1", "")
 
-    params = {'mobile_carrier':mobile_carrier, 'category':category, 'data_speed':data_speed}
+    params = {'mobile_carrier':mobile_carrier, 'category':category, 'data_speed':data_speed,
+              'call':call, 'message':message, 'data1':data1 }
 
     url = host + path
     response = requests.get(url, params=params).json()
@@ -216,6 +261,7 @@ def listing_search(request):
                   {
                       'plans':response, 'count':count,
                       'mobile_carrier':mobile_carrier, 'category':category, 'data_speed':data_speed,
+
                   })
 
 
