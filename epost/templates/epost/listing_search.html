@@ -3,28 +3,34 @@
 {% block extra_body %}
 <style>
    .btn{
-	font-weight: bold;
-	display: inline-block;
-	width: 136px;
-	height: 42px;
-	line-height: 42px;
-	border: 1px solid #ccc;
-	border-radius: 3px;
-	font-size: 15px;
-	text-align: center;
-	background: #f5f5f5;
+		font-weight: bold;
+		display: inline-block;
+		width: 136px;
+		height: 42px;
+		line-height: 42px;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		font-size: 15px;
+		text-align: center;
+		background: #f5f5f5;
    }
-	.btn:active, .btn:hover{
-	color: #fff;
-    font-weight: bold;
-    background: #2e65c2;
-    text-decoration: none;
+	.btn:hover{
+		color: #fff;
+		font-weight: bold;
+		background: #2e65c2;
+		text-decoration: none;
+	}
+	label.active, label.focus{
+		color: #fff;
+		font-weight: bold;
+		background: #2e65c2;
+		text-decoration: none;
 	}
 </style>
 {% endblock %}
 {% block content %}
 <div class="content">
-	<h1>조건별 검색</h1>
+	<a href="listing_search.html"><h1>조건별 검색</h1></a>
 	<form action="" method="get">
 		<div class="col">
 			<table BORDER="1">
@@ -33,14 +39,15 @@
 					<td>
 						<div class="btn-group btn-group-toggle" data-toggle="buttons">
 							<label class="btn">
-								<input type="radio" name="mobile_carrier" value="LGU">LGU+
+								<input type="checkbox" name="mobile_carrier" value="LG">LGU+
 							</label>
 							<label class="btn">
-								<input type="radio" name="mobile_carrier" value="SKT">SKT
+								<input type="checkbox" name="mobile_carrier" value="SK">SKT
 							</label>
 							<label class="btn">
-								<input type="radio" name="mobile_carrier" value="KT">KT
+								<input type="checkbox" name="mobile_carrier" value="KT">KT
 							</label>
+							중복선택이 가능합니다.
 						</div>
 					</td>
 				</tr>
@@ -65,14 +72,15 @@
 					<td>
 						<div class="btn-group btn-group-toggle" data-toggle="buttons">
 							<label class="btn">
-								<input type="radio" name="data_speed" value="LTE">LTE
+								<input type="checkbox" name="data_speed" value="LTE">LTE
 							</label>
 							<label class="btn">
-								<input type="radio" name="data_speed" value="3G">3G
+								<input type="checkbox" name="data_speed" value="3G">3G
 							</label>
 							<label class="btn">
-								<input type="radio" name="data_speed" value="5G">5G
+								<input type="checkbox" name="data_speed" value="5G">5G
 							</label>
+							중복선택이 가능합니다.
 						</div>
 					</td>
 				</tr>
@@ -166,7 +174,6 @@
 			</table>
 		</div>
     </form>
-	{{mobile_carrier}}, {{category}}, {{data_speed}} 조건에 대한 결과입니다.
 	<p>총 {{count}}건의 검색 결과가 있습니다.</p>
 	<hr/>
 	<table>

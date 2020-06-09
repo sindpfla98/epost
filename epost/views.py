@@ -186,20 +186,30 @@ class Listing(views.APIView):
     조건 검색
     """
     def get(self, request, format=None):
-        mobile_carrier = self.request.query_params.get('mobile_carrier')
+        mobile_carrier = self.request.query_params.getlist('mobile_carrier')
         category = self.request.query_params.get('category')
-        data_speed = self.request.query_params.get('data_speed')
+        data_speed = self.request.query_params.getlist('data_speed')
         call = self.request.query_params.get('call')
         message = self.request.query_params.get('message')
         data1 = self.request.query_params.get('data1')
 
         queryset = CallingPlan.objects.all()
+
         if mobile_carrier:
-            queryset = queryset.filter(mobile_carrier__contains=mobile_carrier)
+            queryset = queryset.filter(mobile_carrier=mobile_carrier[0])
+            if len(mobile_carrier)>1:
+                for i in range(1, len(mobile_carrier)):
+                    queryset = queryset|CallingPlan.objects.filter(mobile_carrier=mobile_carrier[i])
+
         if category:
             queryset = queryset.filter(category=category)
+
         if data_speed:
-            queryset = queryset.filter(data_speed=data_speed)
+            queryset = queryset.filter(data_speed=data_speed[0])
+            if len(data_speed)>1:
+                for i in range(1, len(data_speed)):
+                    queryset = queryset|CallingPlan.objects.filter(data_speed=data_speed[i])
+
         if call:
             if call == "0":
                 queryset = queryset.filter(call__lte=50)
@@ -243,9 +253,9 @@ class Listing(views.APIView):
 def listing_search(request):
     path = '/epost/listing'
 
-    mobile_carrier = request.GET.get("mobile_carrier", "")
+    mobile_carrier = request.GET.getlist("mobile_carrier", [])
     category = request.GET.get("category", "")
-    data_speed = request.GET.get("data_speed", "")
+    data_speed = request.GET.getlist("data_speed", [])
     call = request.GET.get("call", "")
     message = request.GET.get("message", "")
     data1 = request.GET.get("data1", "")
@@ -260,27 +270,4 @@ def listing_search(request):
     return render(request, 'epost/listing_search.html',
                   {
                       'plans':response, 'count':count,
-                      'mobile_carrier':mobile_carrier, 'category':category, 'data_speed':data_speed,
-
                   })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
