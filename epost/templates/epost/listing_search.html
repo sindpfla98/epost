@@ -1,36 +1,12 @@
 {% extends "base.html" %}
 {% block title %}조건별 검색{% endblock %}
-{% block extra_body %}
-<style>
-   .btn{
-		font-weight: bold;
-		display: inline-block;
-		width: 136px;
-		height: 42px;
-		line-height: 42px;
-		border: 1px solid #ccc;
-		border-radius: 3px;
-		font-size: 15px;
-		text-align: center;
-		background: #f5f5f5;
-   }
-	.btn:hover{
-		color: #fff;
-		font-weight: bold;
-		background: #2e65c2;
-		text-decoration: none;
-	}
-	label.active, label.focus{
-		color: #fff;
-		font-weight: bold;
-		background: #2e65c2;
-		text-decoration: none;
-	}
-</style>
-{% endblock %}
+
+{% load staticfiles %}
+{% block extrastyle %}{% static "css/listing.css" %}{% endblock %}
+
 {% block content %}
 <div class="content">
-	<a href="listing_search.html"><h1>조건별 검색</h1></a>
+	<h1>조건별 검색</h1>
 	<form action="" method="get">
 		<div class="col">
 			<table BORDER="1">
@@ -90,23 +66,23 @@
 						<div class="btn-group btn-group-toggle" data-toggle="buttons">
 							<label class="btn">
 								<input type="radio" name="call" value="0">매우 적음
-								<span>0~50분</span>
+								<p>0~50분</p>
 							</label>
 							<label class="btn">
 								<input type="radio" name="call" value="1">적음
-								<span>50~100분</span>
+								<p>50~100분</p>
 							</label>
 							<label class="btn">
 								<input type="radio" name="call" value="2">보통
-								<span>100~250분</span>
+								<p>100~250분</p>
 							</label>
 							<label class="btn">
 								<input type="radio" name="call" value="3">많음
-								<span>250분~</span>
+								<p>250분~</p>
 							</label>
 							<label class="btn">
-								<input type="radio" name="call" value="4">무제한
-								<span>망내/완전 무제한</span>
+								<input type="radio" name="call" value="4"><span>매우 많음</span>
+								<p>망내/완전 무제한</p>
 							</label>
 						</div>
 					</td>
@@ -132,7 +108,7 @@
 								<span>200건~</span>
 							</label>
 							<label class="btn">
-								<input type="radio" name="message" value="4">무제한
+								<input type="radio" name="message" value="4">매우 많음
 								<span>무제한</span>
 							</label>
 						</div>
@@ -159,7 +135,7 @@
 								<span>5000MB~</span>
 							</label>
 							<label class="btn">
-								<input type="radio" name="data1" value="4">무제한
+								<input type="radio" name="data1" value="4">매우 많음
 								<span>무제한</span>
 							</label>
 						</div>

@@ -144,6 +144,8 @@ def cvs_upload(request):
         form = CVSUploadForm()
     return render(request, 'epost/cvs_upload.html', {'form': form})
 
+host = 'http://localhost:8000'
+
 class Keyword(views.APIView):
     """
     키워드 검색
@@ -162,15 +164,15 @@ class Keyword(views.APIView):
 
 from django.http import HttpResponseRedirect
 
-host = 'http://localhost:8000'
+
 # 검색
 def keyword_search(request):
-    path = request.build_absolute_uri()
+    path = '/epost/keyword'
 
     keyword = request.GET.get('keyword', '')
     params = {'keyword':keyword}
 
-    url = path
+    url = host + path
     response = requests.get(url, params=params).json()
 
     count = len(response)

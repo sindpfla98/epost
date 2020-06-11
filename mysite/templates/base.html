@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}알뜰폰{% endblock %}</title>
-
+    {% load staticfiles %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% block extrastyle %}{% endblock %}" />
+
+    {% block extra_body %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% endblock %}
 </head>
-<style>
-    .top{background-color: blue; color: white;}
-</style>
-{% block extra_body %}
-{% endblock %}
+
 <body>
 <h1 class="top">알뜰폰</h1>
+<div class="nav">
+    <ul>
+        <li><a href="{% url 'epost:listing_search' %}">조건별 검색</a></li>
+        <li><a href="{% url 'epost:keyword_search' %}">키워드 검색</a></li>
+    </ul>
+</div>
 {% block content %}
 
 {% endblock %}

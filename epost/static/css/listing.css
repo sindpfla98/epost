@@ -1,0 +1,28 @@
+label.btn{
+    font-weight: bold;
+    display: inline-block;
+    width: 136px;
+    height: 42px;
+    line-height: 42px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 15px;
+    text-align: center;
+    background: #f5f5f5;
+    /*margin: 8px;*/
+   }
+.btn:hover{
+    color: #fff;
+    font-weight: bold;
+    background: #2e65c2;
+    text-decoration: none;
+	}
+
+label.active, label.focus{
+    color: #fff;
+    font-weight: bold;
+    background: #2e65c2;
+    text-decoration: none;
+	}
+label input{width: 0px; height: 0px;}
+/*span{font-size: 8px;}*/

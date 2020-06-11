@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 {% block title %}키워드 검색{% endblock %}
 
-{% block extra_body %}
-   <style>
-       p{ font-size: 15px; }
-       #keyword{ width: 100%; }
-   </style>
-{% endblock %}
+{% load staticfiles %}
+{% block extrastyle %}{% static "css/keyword.css" %}{% endblock %}
+
 {% block content %}
+<div class="content">
+    <h1>키워드 검색</h1>
     <form action="" method="get">
         <table border="1" width="60%">
             <tr>
@@ -43,4 +42,5 @@
         </tr>
     {% endfor %}
     </table>
+</div>
 {% endblock %}
