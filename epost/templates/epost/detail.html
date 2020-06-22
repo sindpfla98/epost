@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}조건별 검색{% endblock %}
+
+{% load staticfiles %}
+{% block extrastyle %}{% endblock %}
+
+{% block content %}
+<div class="content">
+    <table>
+        <tr>
+			<th>{{plan.calling_plan}}</th>
+        </tr>
+        <tr>
+            <td>데이터 {{plan.data_category}}MB/{{plan.data_unit}}({{plan.data2}})</td>
+            <td>음성   {{plan.call}}{{plan.call_unit}}</td>
+            <td>문자   {{plan.message}}{{plan.message_unit}}</td>
+        </tr>
+        <tr>
+            <td colspan="3">월 {{plan.pay}} 원</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

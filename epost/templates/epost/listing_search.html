@@ -152,10 +152,11 @@
     </form>
 	<p>총 {{count}}건의 검색 결과가 있습니다.</p>
 	<hr/>
-	<table>
+
     {% for plan in plans %}
+	<table>
         <tr>
-            <th>{{plan.calling_plan}}</th>
+			<th><a href="{% url 'epost:detail' pk=plan.id %}">{{plan.calling_plan}}</a></th>
         </tr>
         <tr>
             <td>데이터 {{plan.data_category}}MB/{{plan.data_unit}}({{plan.data2}})</td>
@@ -163,9 +164,10 @@
             <td>문자   {{plan.message}}{{plan.message_unit}}</td>
         </tr>
         <tr>
-            <td>월 {{plan.pay}} 원</td>
+            <td colspan="3">월 {{plan.pay}} 원</td>
         </tr>
+	</table>
     {% endfor %}
-    </table>
+
 </div>
 {% endblock %}

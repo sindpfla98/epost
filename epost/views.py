@@ -3,14 +3,13 @@ import requests
 from .models import CallingPlan, CVSUpload
 from .forms import CVSUploadForm
 from .serializers import *
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.db.models.base import ObjectDoesNotExist
 from django.urls import reverse
 from django.conf import settings
 from rest_framework import views
 from rest_framework.response import Response
-
 
 def insert_data(request):
     CSV_PATH = './epost/calling-plan-data.csv'
@@ -270,6 +269,8 @@ def listing_search(request):
 
     count = len(response)
     return render(request, 'epost/listing_search.html',
-                  {
-                      'plans':response, 'count':count,
-                  })
+                    { 'plans':response, 'count':count, })
+
+def detail(request, pk):
+    plan = get_object_or_404(CallingPlan, pk=pk)
+    return render(request, 'epost/detail.html',{'plan':plan})

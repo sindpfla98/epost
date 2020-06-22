@@ -26,3 +26,7 @@ label.active, label.focus{
 	}
 label input{width: 0px; height: 0px;}
 /*span{font-size: 8px;}*/
+
+table{
+    border-bottom: solid 1px black;
+}
